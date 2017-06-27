@@ -4,7 +4,7 @@
 #
 Name     : connman-gtk
 Version  : 1.1.1
-Release  : 3
+Release  : 4
 URL      : https://github.com/jgke/connman-gtk/archive/v1.1.1.tar.gz
 Source0  : https://github.com/jgke/connman-gtk/archive/v1.1.1.tar.gz
 Summary  : No detailed summary available
@@ -21,6 +21,9 @@ BuildRequires : perl(XML::Parser)
 BuildRequires : pkgconfig(glib-2.0)
 BuildRequires : pkgconfig(gtk+-3.0)
 BuildRequires : pkgconfig(openconnect)
+# Suppress stripping binaries
+%define __strip /bin/true
+%define debug_package %{nil}
 
 %description
 connman-gtk
@@ -66,7 +69,11 @@ locales components for the connman-gtk package.
 %setup -q -n connman-gtk-1.1.1
 
 %build
+export http_proxy=http://127.0.0.1:9/
+export https_proxy=http://127.0.0.1:9/
+export no_proxy=localhost,127.0.0.1,0.0.0.0
 export LANG=C
+export SOURCE_DATE_EPOCH=1498577213
 %autogen --disable-static --enable-status-icon=yes
 make V=1  %{?_smp_mflags}
 
@@ -74,10 +81,11 @@ make V=1  %{?_smp_mflags}
 export LANG=C
 export http_proxy=http://127.0.0.1:9/
 export https_proxy=http://127.0.0.1:9/
-export no_proxy=localhost
+export no_proxy=localhost,127.0.0.1,0.0.0.0
 make VERBOSE=1 V=1 %{?_smp_mflags} check
 
 %install
+export SOURCE_DATE_EPOCH=1498577213
 rm -rf %{buildroot}
 %make_install
 %find_lang connman-gtk
@@ -98,6 +106,6 @@ rm -rf %{buildroot}
 %defattr(-,root,root,-)
 %doc /usr/share/man/man1/*
 
-%files locales -f connman-gtk.lang 
+%files locales -f connman-gtk.lang
 %defattr(-,root,root,-)
 
